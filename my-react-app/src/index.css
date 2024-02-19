@@ -53,6 +53,13 @@ button {
     background-color: hsl(166, 72%, 47%);
 }
 
+.confirm-button {
+    background-color: hsl(0, 3%, 20%);
+}
+.confirm-button:hover {
+    background-color: hsl(0, 3%, 15%);
+}
+
 input[type='text'] {
     font-size: 1.5rem;
     padding: 10px;
@@ -80,7 +87,7 @@ li {
     flex: 1;
 }
 
-.delete-button, .move-button, .edit-button {
+.delete-button, .move-button, .edit-button, .confirm-button {
     padding: 8px 12px;
     font-size: 1.4rem;
     margin-left: 10px;
