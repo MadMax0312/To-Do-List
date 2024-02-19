@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 function ToDoList() {
-    const [tasks, setTasks] = useState([
-        { text: "Eat", isEditing: false },
-        { text: "Shower", isEditing: false },
-        { text: "Walk", isEditing: false }
-    ]);
+    const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState("");
-    const [editTask, setEditTask] = useState('')
+    const [editTask, setEditTask] = useState("");
+
+    useEffect(() => {
+        const storedTodos = JSON.parse(localStorage.getItem('tasks'));
+        if (storedTodos && storedTodos.length > 0) {
+            setTasks(storedTodos);
+        }
+    }, []);
+    
+    useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, [tasks]);    
+
 
     function handleInputChange(event) {
         setNewTask(event.target.value);
@@ -18,49 +26,48 @@ function ToDoList() {
         if (newTask.trim() === "") {
             toast.error("Enter valid task");
         } else if (
-            tasks.some((task) => task.toLowerCase() === newTask.toLowerCase())
+            tasks.some((task) => task.text.toLowerCase() === newTask.toLowerCase())
         ) {
             toast.error("Task already present");
         } else {
-            setTasks((t) => [...t, newTask]);
+            setTasks((t) => [...t, { text: newTask, isEditing: false, completed: false }]);
             setNewTask("");
             toast.success("New task added");
         }
-    }
+    }    
 
     function handleStartEdit(index) {
         const updatedTasks = [...tasks];
-        var duplicate = updatedTasks[index].text
+        var duplicate = updatedTasks[index].text;
         updatedTasks[index].isEditing = true;
-        setEditTask(duplicate)
+        setEditTask(duplicate);
         setTasks(updatedTasks);
     }
-    
+
     function handleEditInputChange(e, index) {
         const updatedTasks = [...tasks];
         updatedTasks[index].text = e.target.value;
         setTasks(updatedTasks);
     }
-    
+
     function handleEditTask(index) {
         const taskToEdit = tasks[index];
-        const isEdited = taskToEdit.text.trim()
-    
-            if(isEdited === "") {
-                toast.error('Task cannot be empty')
-            } else {
+        const isEdited = taskToEdit.text.trim();
+
+        if (isEdited === "") {
+            toast.error("Task cannot be empty");
+        } else {
             const updatedTasks = [...tasks];
             updatedTasks[index].isEditing = false;
-            
+
             setTasks(updatedTasks);
             if (updatedTasks[index].text === editTask) {
-                toast.info('No changes made');
+                toast.info("No changes made");
             } else {
                 toast.success("Task edited");
             }
-            }
+        }
     }
-    
 
     function deleteTask(index) {
         const isConfirmed = window.confirm(
@@ -96,6 +103,12 @@ function ToDoList() {
         }
     }
 
+    function taskCompleted(index) {
+        const updatedTasks = [...tasks];
+        updatedTasks[index].completed = !updatedTasks[index].completed;
+        setTasks(updatedTasks);
+    }
+
     return (
         <div className="to-do-list">
             <h1>To-Do-List</h1>
@@ -111,30 +124,46 @@ function ToDoList() {
                     Add
                 </button>
             </div>
-            <div className="ol-div">
-                <ol className="">
-                    {tasks.map((task, index) => (
-                        <li key={index}>
-                        {task.isEditing ? (
-                            <>
-                            <input
-                                type="text"
-                                value={task.text}
-                                onChange={e => handleEditInputChange(e, index)}
-                            />
-                            <button onClick={() => handleEditTask(index)} className="confirm-button">Ok</button>
-                            </>
-                        ) : (
-                            <>
-                                <span className="text">{task.text}</span>
-                                <button
-                                    className="edit-button"
-                                    onClick={() => handleStartEdit(index)}
-                                >
-                                    Edit
-                                </button>
-                            </>
-                        )}
+            
+                  <div className="cool">
+                  {tasks.map((task, index) =>{ return (
+                        // <div className="ol-div">
+                        <ol className="">
+                        <li
+                            key={index}
+                            style={{
+                                textDecoration: task.completed
+                                    ? "line-through"
+                                    : "none",
+                            }}
+                        >
+                            {task.isEditing ? (
+                                <>
+                                    <input
+                                        type="text"
+                                        value={task.text}
+                                        onChange={(e) =>
+                                            handleEditInputChange(e, index)
+                                        }
+                                    />
+                                    <button
+                                        onClick={() => handleEditTask(index)}
+                                        className="confirm-button"
+                                    >
+                                        Ok
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="text">{task.text}</span>
+                                    <button
+                                        className="edit-button"
+                                        onClick={() => handleStartEdit(index)}
+                                    >
+                                        Edit
+                                    </button>
+                                </>
+                            )}
 
                             <button
                                 className="delete-button"
@@ -156,10 +185,21 @@ function ToDoList() {
                             >
                                 &#x2B07; {/* Down arrow emoji */}
                             </button>
+
+                            <input
+                                type="checkbox"
+                                className="check-button"
+                                checked={task.completed}
+                                onChange={() => taskCompleted(index)}
+                            />
                         </li>
-                    ))}
-                </ol>
-            </div>
+                        </ol>
+                        // </div>
+                        )
+                            })}
+                  </div>
+                
+            
         </div>
     );
 }

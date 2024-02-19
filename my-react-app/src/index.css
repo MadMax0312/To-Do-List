@@ -60,6 +60,10 @@ button {
     background-color: hsl(0, 3%, 15%);
 }
 
+.check-button {
+    background-color: gray;
+}
+
 input[type='text'] {
     font-size: 1.5rem;
     padding: 10px;
@@ -71,7 +75,7 @@ ol {
     padding: 0;
 }
 li {
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: bold;
     padding: 15px;
     background-color: hsl(0, 0%, 95%);
@@ -84,17 +88,34 @@ li {
 }
 
 .text {
-    flex: 1;
+    flex: 1; /*/ Fill the available space in flex container evenly. Also used to make flex items expand */
 }
 
 .delete-button, .move-button, .edit-button, .confirm-button {
     padding: 8px 12px;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     margin-left: 10px;
 }
 
-.ol-div{
+.check-button {
+    transform: scale(2);
+    padding: 5px, 5px;
+    margin-left: 15px;
+}
+
+/* .ol-div{
     width: 100%;
     display: flex;
     justify-content: center;
+} */
+
+.cool{
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    overflow: auto;   
+    height: 300px;
+}
+.cool::-webkit-scrollbar{
+    display:none;
 }
