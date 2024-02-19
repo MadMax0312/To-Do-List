@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from 'react-toastify';
+
 
 function ToDoList() {
     const [tasks, setTasks] = useState(["Eat", "shower", "walk"]);
@@ -10,17 +12,32 @@ function ToDoList() {
 
     function addTask() {
 
-        if(newTask.trim() !== "") {
+        if (newTask.trim() === "") {
+            toast.error('Enter valid task')
+        }else if(tasks.some(task => task.toLowerCase() === newTask.toLowerCase())) {
+            toast.error('Task already present')
+        }
+        else{
             setTasks(t => [...t, newTask])
             setNewTask('')
+            toast.success('New task added')
         }
         
     }
 
-    function deleteTask(index) {
+    function editTask() {
+        
+    }
 
-        const updatedTasks = tasks.filter((_,i) => i!==index)
-        setTasks(updatedTasks)
+    function deleteTask(index) {
+        const isConfirmed = window.confirm('Are you sure you want to delete this task?');
+
+        if (isConfirmed) {
+            const updatedTasks = tasks.filter((_, i) => i !== index);
+            setTasks(updatedTasks);
+            toast.success('Task deleted');
+        }
+        
     }
 
     function moveTaskUp(index) {
@@ -65,6 +82,13 @@ function ToDoList() {
                     <span className="text">
                         {task}
                     </span>
+
+                    <button
+                    className="edit-button"
+                    onClick={() => editTask(index)}>
+                        Edit
+                    </button>
+
                     <button
                     className="delete-button"
                     onClick={() => deleteTask(index)}>
